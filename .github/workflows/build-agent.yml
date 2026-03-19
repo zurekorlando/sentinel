@@ -29,13 +29,22 @@ jobs:
         run: |
           pip install pyinstaller fastapi uvicorn[standard] anyio pydantic pywin32
 
-      - name: Download NSSM
+      - name: Download NSSM from GitHub mirror
         shell: powershell
         run: |
-          mkdir -p dist
-          Invoke-WebRequest -Uri "https://nssm.cc/release/nssm-2.24.zip" -OutFile "dist/nssm.zip"
-          Expand-Archive -Path "dist/nssm.zip" -DestinationPath "dist/nssm_tmp"
+          New-Item -ItemType Directory -Force -Path dist | Out-Null
+          $url = "https://github.com/nicholasgasior/nssm-mirror/releases/download/2.24/nssm-2.24.zip"
+          $fallback = "https://www.nssm.cc/release/nssm-2.24.zip"
+          try {
+            Invoke-WebRequest -Uri $url -OutFile "dist/nssm.zip" -TimeoutSec 30
+            Write-Host "Downloaded from mirror"
+          } catch {
+            Write-Host "Mirror failed, trying fallback..."
+            Invoke-WebRequest -Uri $fallback -OutFile "dist/nssm.zip" -TimeoutSec 30
+          }
+          Expand-Archive -Path "dist/nssm.zip" -DestinationPath "dist/nssm_tmp" -Force
           Copy-Item "dist/nssm_tmp/nssm-2.24/win64/nssm.exe" "dist/nssm_win64.exe"
+          Write-Host "NSSM ready: $((Get-Item dist/nssm_win64.exe).Length) bytes"
 
       - name: Build .exe with PyInstaller
         run: python agent/build.py
@@ -60,5 +69,3 @@ jobs:
           files: |
             dist/SentinelAgent.exe
             dist/SentinelAgent-installer.zip
-          draft: false
-          prerelease: false
