@@ -1,0 +1,33 @@
+{
+  "job_id": "my-documents-daily",
+  "source_paths": [
+    "/data/source"
+  ],
+  "catalog_path": "/data/catalog/sentinel_catalog.db",
+  "exclusions": [
+    "**/.git",
+    "**/__pycache__",
+    "**/*.pyc",
+    "**/.DS_Store",
+    "**/*.tmp",
+    "**/Thumbs.db"
+  ],
+  "compression_level": 3,
+  "max_workers": 4,
+  "webhook_url": null,
+  "key_salt_hex": "3d57bf9906c39594bdacac97d0493ecb206b698c3cd7ffe0c458ad77fba35162",
+  "storage": {
+    "provider": "s3",
+    "bucket": "sentinel",
+    "prefix": "chunks/",
+    "endpoint_url": "http://minio:9000",
+    "aws_access_key_id": "sentinel_admin",
+    "aws_secret_access_key": "sentinel_password",
+    "region": "us-east-1"
+  },
+  "retention": {
+    "daily": 7,
+    "weekly": 4,
+    "monthly": 12
+  }
+}

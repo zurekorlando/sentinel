@@ -1,0 +1,47 @@
+# ── Python ──────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Test & coverage ──────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Sentinel runtime artifacts ───────────────────────────────
+# SQLite catalog (WAL mode generates 3 files)
+*.db
+*.db-wal
+*.db-shm
+# CBT state file
+*.cbt.json
+# Dev demo data created by scripts/seed_demo.py
+test_data/
+sentinel_store_dev/
+sentinel_catalog_dev.*
+
+# ── Web frontend ─────────────────────────────────────────────
+web/dist/
+web/node_modules/
+
+# ── Environment / secrets ────────────────────────────────────
+.env
+# Keep .env.example in version control — it's the template
+
+# ── Docker ───────────────────────────────────────────────────
+# Docker volumes are managed by Docker, not git
+
+# ── OS artifacts ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE ──────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
