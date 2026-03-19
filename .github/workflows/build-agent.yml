@@ -7,7 +7,10 @@ on:
       - 'agent/**'
       - 'sentinel/ssm/**'
       - '.github/workflows/build-agent.yml'
-  workflow_dispatch:  # permite ejecutarlo manualmente desde GitHub
+  workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build-windows-agent:
@@ -27,12 +30,12 @@ jobs:
           pip install pyinstaller fastapi uvicorn[standard] anyio pydantic pywin32
 
       - name: Download NSSM
+        shell: powershell
         run: |
           mkdir -p dist
           Invoke-WebRequest -Uri "https://nssm.cc/release/nssm-2.24.zip" -OutFile "dist/nssm.zip"
           Expand-Archive -Path "dist/nssm.zip" -DestinationPath "dist/nssm_tmp"
           Copy-Item "dist/nssm_tmp/nssm-2.24/win64/nssm.exe" "dist/nssm_win64.exe"
-        shell: powershell
 
       - name: Build .exe with PyInstaller
         run: python agent/build.py
@@ -47,13 +50,12 @@ jobs:
           path: |
             dist/SentinelAgent.exe
             dist/SentinelAgent-installer.zip
-          retention-days: 30
+          retention-days: 90
 
-      - name: Create Release (solo en push a main)
+      - name: Create Release
         uses: softprops/action-gh-release@v2
-        if: github.ref == 'refs/heads/main'
         with:
-          tag_name: agent-${{ github.run_number }}
+          tag_name: agent-build-${{ github.run_number }}
           name: "Sentinel Agent Build #${{ github.run_number }}"
           files: |
             dist/SentinelAgent.exe
